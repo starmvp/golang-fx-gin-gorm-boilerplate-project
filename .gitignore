@@ -23,3 +23,6 @@ go.work
 # macOS
 *~
 .DS_Store
+
+## local version of env files
+.env.*.local
