@@ -1,6 +1,7 @@
 package server
 
 import (
+	"golang-fx-gin-gorm-boilerplate-project/internal/config"
 	"golang-fx-gin-gorm-boilerplate-project/internal/logger"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,7 @@ type Server struct {
 type ServerParams struct {
 	fx.In
 
+	Config *config.Config
 	Logger *logger.Logger
 }
 
@@ -26,6 +28,8 @@ type ServerResult struct {
 }
 
 func New(params ServerParams) (ServerResult, error) {
+	// TODO: add configure for server
+
 	g := gin.New()
 	_ = g.SetTrustedProxies(nil)
 

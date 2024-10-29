@@ -1,6 +1,7 @@
 package db
 
 import (
+	"golang-fx-gin-gorm-boilerplate-project/internal/config"
 	"golang-fx-gin-gorm-boilerplate-project/internal/logger"
 
 	"go.uber.org/fx"
@@ -19,6 +20,7 @@ type DB struct {
 type DBParams struct {
 	fx.In
 
+	Config *config.Config
 	Logger *logger.Logger
 }
 
@@ -29,6 +31,8 @@ type DBResult struct {
 }
 
 func New(params DBParams) (DBResult, error) {
+	// TODO: add configure for db
+
 	l := params.Logger
 	if l == nil {
 		l = zap.NewNop()
