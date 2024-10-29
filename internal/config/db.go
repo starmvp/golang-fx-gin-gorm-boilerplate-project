@@ -1,6 +1,7 @@
 package config
 
 import (
+	"golang-fx-gin-gorm-boilerplate-project/internal/utils"
 	"log"
 	"os"
 	"strconv"
@@ -18,18 +19,41 @@ type DBConfig struct {
 	DBConnMaxLife  int
 }
 
+// TODO: provide default values support
+const (
+	defaultDBMaxOpenConns = "10"
+	defaultDBMaxIdleConns = "5"
+	defaultDBConnMaxLife  = "3600"
+)
+
 func LoadDBConfig() *DBConfig {
-	maxOpenConns, err := strconv.Atoi(os.Getenv("DB_MAX_OPEN_CONNS"))
+	maxOpenConns, err := strconv.Atoi(
+		utils.GetEnv(
+			"DB_MAX_OPEN_CONNS",
+			defaultDBMaxOpenConns,
+		),
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	maxIdleConns, err := strconv.Atoi(os.Getenv("DB_MAX_IDLE_CONNS"))
+	maxIdleConns, err := strconv.Atoi(
+		utils.GetEnv(
+			"DB_MAX_IDLE_CONNS",
+			defaultDBMaxIdleConns,
+		),
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	connMaxLife, err := strconv.Atoi(os.Getenv("DB_CONN_MAX_LIFE"))
+	connMaxLife, err := strconv.Atoi(
+		utils.GetEnv(
+			"DB_CONN_MAX_LIFE",
+			defaultDBConnMaxLife,
+		),
+	)
+
 	if err != nil {
 		log.Fatal(err)
 	}

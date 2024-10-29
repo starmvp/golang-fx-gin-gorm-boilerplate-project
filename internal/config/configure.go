@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -27,15 +28,18 @@ func NewConfig() *Config {
 		ef = ".env." + en
 	}
 
+	fmt.Println("Loading environment file:", ef)
+
 	err := godotenv.Load(ef)
 	if err != nil {
 		log.Println("Error loading .env file")
 	}
 
 	return &Config{
+		// TODO: split in the manner of fx, and make it flexible to extend
 		DB:   LoadDBConfig(),
 		HTTP: LoadHTTPConfig(),
 	}
 }
 
-var Model = fx.Provide(NewConfig)
+var Module = fx.Provide(NewConfig)
