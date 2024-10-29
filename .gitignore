@@ -26,3 +26,6 @@ go.work
 
 ## local version of env files
 .env.*.local
+
+## build results
+dist
