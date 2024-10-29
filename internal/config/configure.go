@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"go.uber.org/fx"
 )
 
 type Config struct {
@@ -36,3 +37,5 @@ func NewConfig() *Config {
 		HTTP: LoadHTTPConfig(),
 	}
 }
+
+var Model = fx.Provide(NewConfig)
