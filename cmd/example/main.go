@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"golang-fx-gin-gorm-boilerplate-project/internal/config"
 	"golang-fx-gin-gorm-boilerplate-project/internal/db"
 	"golang-fx-gin-gorm-boilerplate-project/internal/web/controller"
 	"golang-fx-gin-gorm-boilerplate-project/internal/web/server"
@@ -20,7 +21,13 @@ import (
 	"go.uber.org/zap"
 )
 
-func getWebserverAddr() string {
+type Params struct {
+	fx.In
+
+	Config *config.Config
+}
+
+func getWebserverAddr(params Params) string {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "18080"
@@ -34,6 +41,7 @@ func getWebserverAddr() string {
 
 func main() {
 	app := fx.New(
+		config.Module,
 		server.Module,
 		db.Module,
 		example.Module,
@@ -48,12 +56,14 @@ func main() {
 		fx.Invoke(func(server *server.Server, logger *zap.Logger) {
 			logger.Debug("Webserver module invoked")
 			go func() {
-				_ = server.Gin.Run(getWebserverAddr())
+				_ = server.Gin.Run(getWebserverAddr(Params{}))
 			}()
 		}, func(ctrl *controller.Controller, logger *zap.Logger) {
 			logger.Debug("Controller module invoked")
 		}, func(db *db.DB, logger *zap.Logger) {
 			logger.Debug("Database module invoked")
+		}, func(config *config.Config, logger *zap.Logger) {
+			logger.Debug("Config module invoked")
 		}, func(logger *zap.Logger) {
 			logger.Debug("Logger module invoked")
 		}),
@@ -71,7 +81,12 @@ func main() {
 	go func() {
 		time.Sleep(5 * time.Second)
 
-		res, err := resty.New().R().Get(fmt.Sprintf("http://%s/ping", getWebserverAddr()))
+		res, err := resty.
+			New().
+			R().
+			Get(
+				fmt.Sprintf("http://%s/ping", getWebserverAddr(Params{})),
+			)
 		if err != nil {
 			log.Fatal(fmt.Errorf("resty.Get: %w", err))
 		}
