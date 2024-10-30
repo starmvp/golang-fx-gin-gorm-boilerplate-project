@@ -3,9 +3,9 @@ package example
 import (
 	"golang-fx-gin-gorm-boilerplate-project/internal/app"
 	e "golang-fx-gin-gorm-boilerplate-project/internal/errors"
-	"golang-fx-gin-gorm-boilerplate-project/internal/logger"
 
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
 type ExampleApp struct {
@@ -14,7 +14,7 @@ type ExampleApp struct {
 
 func NewExampleApp(
 	app *app.App,
-	logger *logger.Logger,
+	logger *zap.Logger,
 ) (*ExampleApp, error) {
 
 	if app == nil {

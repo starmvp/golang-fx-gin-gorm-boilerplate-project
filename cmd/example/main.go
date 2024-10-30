@@ -46,27 +46,27 @@ func main() {
 		routers.Module,
 
 		fx.Provide(zap.NewExample),
-		fx.WithLogger(func(logger *logger.Logger) fxevent.Logger {
+		fx.WithLogger(func(logger *zap.Logger) fxevent.Logger {
 			return &fxevent.ZapLogger{Logger: logger}
 		}),
 
 		fx.Invoke(
-			func(app *app.App, logger *logger.Logger) {
+			func(app *app.App, logger *zap.Logger) {
 				logger.Debug("Webserver module invoked")
 				go func() {
 					_ = app.Server.Gin.Run(getWebserverAddr())
 				}()
 			},
-			func(cl []*controller.Controller, logger *logger.Logger) {
+			func(cl []*controller.Controller, logger *zap.Logger) {
 				logger.Debug("Controller module invoked")
 			},
-			func(db *db.DB, logger *logger.Logger) {
+			func(db *db.DB, logger *zap.Logger) {
 				logger.Debug("Database module invoked")
 			},
-			func(config *config.Config, logger *logger.Logger) {
+			func(config *config.Config, logger *zap.Logger) {
 				logger.Debug("Config module invoked")
 			},
-			func(logger *logger.Logger) {
+			func(logger *zap.Logger) {
 				logger.Debug("Logger module invoked")
 			},
 		),

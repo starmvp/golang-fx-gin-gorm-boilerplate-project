@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"golang-fx-gin-gorm-boilerplate-project/internal/db"
-	"golang-fx-gin-gorm-boilerplate-project/internal/logger"
 	"golang-fx-gin-gorm-boilerplate-project/internal/web/controller"
 
 	"go.uber.org/zap"
@@ -10,7 +9,7 @@ import (
 
 func CreateControllers(
 	d *db.DB,
-	l *logger.Logger,
+	l *zap.Logger,
 ) ([]*controller.Controller, error) {
 	cl := make([]*controller.Controller, 0)
 

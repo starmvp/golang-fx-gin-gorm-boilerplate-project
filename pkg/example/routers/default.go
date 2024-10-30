@@ -2,7 +2,6 @@ package routers
 
 import (
 	"golang-fx-gin-gorm-boilerplate-project/internal/db"
-	"golang-fx-gin-gorm-boilerplate-project/internal/logger"
 	"golang-fx-gin-gorm-boilerplate-project/internal/web/controller"
 	"golang-fx-gin-gorm-boilerplate-project/internal/web/server"
 	"golang-fx-gin-gorm-boilerplate-project/pkg/example/controllers"
@@ -13,7 +12,7 @@ import (
 func registerDefaultRoutes(
 	s *server.Server,
 	d *db.DB,
-	l *logger.Logger,
+	l *zap.Logger,
 ) ([]*controller.Controller, error) {
 	cl, err := controllers.CreateControllers(d, l)
 	if err != nil {

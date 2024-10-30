@@ -2,11 +2,11 @@ package controllers
 
 import (
 	"golang-fx-gin-gorm-boilerplate-project/internal/db"
-	"golang-fx-gin-gorm-boilerplate-project/internal/logger"
 	"golang-fx-gin-gorm-boilerplate-project/internal/web/controller"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type PingController struct {
@@ -15,7 +15,7 @@ type PingController struct {
 
 func NewPingController(
 	Db *db.DB,
-	Logger *logger.Logger,
+	Logger *zap.Logger,
 ) (*PingController, error) {
 	pc := &PingController{}
 	handlers := make([]controller.Handler, 0)
