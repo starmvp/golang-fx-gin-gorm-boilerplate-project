@@ -3,12 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"golang-fx-gin-gorm-boilerplate-project/internal/app"
 	"golang-fx-gin-gorm-boilerplate-project/internal/config"
 	"golang-fx-gin-gorm-boilerplate-project/internal/db"
+	"golang-fx-gin-gorm-boilerplate-project/internal/logger"
 	"golang-fx-gin-gorm-boilerplate-project/internal/web/controller"
 	"golang-fx-gin-gorm-boilerplate-project/internal/web/server"
 	"golang-fx-gin-gorm-boilerplate-project/pkg/example"
-	"golang-fx-gin-gorm-boilerplate-project/pkg/example/controllers"
 	"golang-fx-gin-gorm-boilerplate-project/pkg/example/routers"
 	"log"
 	"os"
@@ -21,13 +22,7 @@ import (
 	"go.uber.org/zap"
 )
 
-type Params struct {
-	fx.In
-
-	Config *config.Config
-}
-
-func getWebserverAddr(params Params) string {
+func getWebserverAddr() string {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "18080"
@@ -41,32 +36,40 @@ func getWebserverAddr(params Params) string {
 
 func main() {
 	app := fx.New(
+		app.Module,
 		config.Module,
-		server.Module,
 		db.Module,
+		logger.Module,
+		server.Module,
+
 		example.Module,
-		controllers.Module,
 		routers.Module,
 
 		fx.Provide(zap.NewExample),
-		fx.WithLogger(func(logger *zap.Logger) fxevent.Logger {
+		fx.WithLogger(func(logger *logger.Logger) fxevent.Logger {
 			return &fxevent.ZapLogger{Logger: logger}
 		}),
 
-		fx.Invoke(func(server *server.Server, logger *zap.Logger) {
-			logger.Debug("Webserver module invoked")
-			go func() {
-				_ = server.Gin.Run(getWebserverAddr(Params{}))
-			}()
-		}, func(ctrl *controller.Controller, logger *zap.Logger) {
-			logger.Debug("Controller module invoked")
-		}, func(db *db.DB, logger *zap.Logger) {
-			logger.Debug("Database module invoked")
-		}, func(config *config.Config, logger *zap.Logger) {
-			logger.Debug("Config module invoked")
-		}, func(logger *zap.Logger) {
-			logger.Debug("Logger module invoked")
-		}),
+		fx.Invoke(
+			func(app *app.App, logger *logger.Logger) {
+				logger.Debug("Webserver module invoked")
+				go func() {
+					_ = app.Server.Gin.Run(getWebserverAddr())
+				}()
+			},
+			func(cl []*controller.Controller, logger *logger.Logger) {
+				logger.Debug("Controller module invoked")
+			},
+			func(db *db.DB, logger *logger.Logger) {
+				logger.Debug("Database module invoked")
+			},
+			func(config *config.Config, logger *logger.Logger) {
+				logger.Debug("Config module invoked")
+			},
+			func(logger *logger.Logger) {
+				logger.Debug("Logger module invoked")
+			},
+		),
 	)
 
 	startCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -85,7 +88,7 @@ func main() {
 			New().
 			R().
 			Get(
-				fmt.Sprintf("http://%s/ping", getWebserverAddr(Params{})),
+				fmt.Sprintf("http://%s/ping", getWebserverAddr()),
 			)
 		if err != nil {
 			log.Fatal(fmt.Errorf("resty.Get: %w", err))

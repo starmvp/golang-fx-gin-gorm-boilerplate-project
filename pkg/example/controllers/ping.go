@@ -7,27 +7,16 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"go.uber.org/fx"
 )
 
 type PingController struct {
 	controller.Controller
 }
 
-type PingControllerParams struct {
-	fx.In
-
-	Db     *db.DB
-	Logger *logger.Logger
-}
-
-type PingControllerResult struct {
-	fx.Out
-
-	Controller *PingController
-}
-
-func NewPingController(params PingControllerParams) (PingControllerResult, error) {
+func NewPingController(
+	Db *db.DB,
+	Logger *logger.Logger,
+) (*PingController, error) {
 	pc := &PingController{}
 	handlers := make([]controller.Handler, 0)
 	h, err := controller.NewHandler(controller.HandlerParams{
@@ -36,23 +25,19 @@ func NewPingController(params PingControllerParams) (PingControllerResult, error
 		Handler: pc.handler,
 	})
 	if err != nil {
-		return PingControllerResult{Controller: nil}, err
+		return nil, err
 	}
 	handlers = append(handlers, h.Handler)
 
-	result, err := controller.NewController(controller.ControllerParams{
-		Db:       params.Db,
-		Logger:   params.Logger,
-		Handlers: handlers,
-	})
+	c, err := controller.NewController(Db, Logger, handlers)
 
 	if err != nil {
 		pc = nil
 	} else {
-		pc.Controller = *result.Controller
+		pc.Controller = *c
 	}
 
-	return PingControllerResult{Controller: pc}, err
+	return pc, err
 }
 
 func (e *PingController) handler(ctx *gin.Context) {
