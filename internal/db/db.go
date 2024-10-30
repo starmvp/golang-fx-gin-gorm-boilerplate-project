@@ -8,7 +8,6 @@ import (
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
-	"moul.io/zapgorm2"
 )
 
 type DB struct {
@@ -38,7 +37,7 @@ func New(params DBParams) (DBResult, error) {
 		l = zap.NewNop()
 	}
 
-	gormLogger := zapgorm2.New(l)
+	gormLogger := logger.NewGormLogger(l)
 	gormLogger.SetAsDefault()
 	gormLogger.LogLevel = gormlogger.Warn
 
