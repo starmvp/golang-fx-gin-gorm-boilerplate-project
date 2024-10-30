@@ -2,10 +2,10 @@ package app
 
 import (
 	"golang-fx-gin-gorm-boilerplate-project/internal/config"
-	"golang-fx-gin-gorm-boilerplate-project/internal/logger"
 	"golang-fx-gin-gorm-boilerplate-project/internal/web/server"
 
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
 type App struct {
@@ -15,7 +15,7 @@ type App struct {
 func NewApp(
 	Server *server.Server,
 	Config *config.Config,
-	Logger *logger.Logger,
+	Logger *zap.Logger,
 ) (*App, error) {
 	app := App{
 		Server: Server,

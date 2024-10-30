@@ -2,7 +2,6 @@ package server
 
 import (
 	"golang-fx-gin-gorm-boilerplate-project/internal/config"
-	"golang-fx-gin-gorm-boilerplate-project/internal/logger"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
@@ -11,12 +10,12 @@ import (
 
 type Server struct {
 	Gin    *gin.Engine
-	Logger *logger.Logger
+	Logger *zap.Logger
 }
 
 func New(
 	Config *config.Config,
-	Logger *logger.Logger,
+	Logger *zap.Logger,
 ) (*Server, error) {
 	// TODO: add configure for server
 

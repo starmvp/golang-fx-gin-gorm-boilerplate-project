@@ -2,7 +2,6 @@ package controller
 
 import (
 	"golang-fx-gin-gorm-boilerplate-project/internal/db"
-	"golang-fx-gin-gorm-boilerplate-project/internal/logger"
 	"golang-fx-gin-gorm-boilerplate-project/internal/web/router"
 	"golang-fx-gin-gorm-boilerplate-project/internal/web/server"
 
@@ -12,14 +11,14 @@ import (
 
 type Controller struct {
 	Db     *db.DB
-	Logger *logger.Logger
+	Logger *zap.Logger
 
 	Handlers []Handler
 }
 
 func NewController(
 	Db *db.DB,
-	Logger *logger.Logger,
+	Logger *zap.Logger,
 	Handlers []Handler,
 ) (*Controller, error) {
 	l := Logger

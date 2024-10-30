@@ -12,14 +12,14 @@ import (
 )
 
 type DB struct {
-	Logger   *logger.Logger
+	Logger   *zap.Logger
 	DB       *gorm.DB
 	DBConfig *gorm.Config
 }
 
 func New(
 	Config *config.Config,
-	Logger *logger.Logger,
+	Logger *zap.Logger,
 	GormLogger logger.GormLogger,
 ) (*DB, error) {
 	// TODO: add configure for db
