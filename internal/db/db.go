@@ -1,6 +1,7 @@
 package db
 
 import (
+	"fmt"
 	"golang-fx-gin-gorm-boilerplate-project/internal/config"
 	"golang-fx-gin-gorm-boilerplate-project/internal/logger"
 
@@ -16,39 +17,32 @@ type DB struct {
 	DBConfig *gorm.Config
 }
 
-type DBParams struct {
-	fx.In
-
-	Config *config.Config
-	Logger *logger.Logger
-}
-
-type DBResult struct {
-	fx.Out
-
-	DB *DB
-}
-
-func New(params DBParams) (DBResult, error) {
+func New(
+	Config *config.Config,
+	Logger *logger.Logger,
+	GormLogger logger.GormLogger,
+) (*DB, error) {
 	// TODO: add configure for db
 
-	l := params.Logger
-	if l == nil {
-		l = zap.NewNop()
+	if Logger == nil {
+		Logger = zap.NewNop()
 	}
 
-	gormLogger := logger.NewGormLogger(l)
-	gormLogger.SetAsDefault()
-	gormLogger.LogLevel = gormlogger.Warn
+	fmt.Println("DB module invoked. GormLogger=", GormLogger)
+
+	GormLogger.SetAsDefault()
+	GormLogger.LogLevel = gormlogger.Warn
 
 	db := DB{
-		Logger: l,
+		Logger: Logger,
 		DBConfig: &gorm.Config{
-			Logger: gormLogger,
+			Logger: GormLogger,
 		},
 	}
 
-	return DBResult{DB: &db}, nil
+	return &db, nil
 }
 
-var Module = fx.Provide(New)
+var Module = fx.Provide(
+	fx.Annotate(New),
+)

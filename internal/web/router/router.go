@@ -9,11 +9,6 @@ import (
 
 type RegisterRouteParams struct {
 	fx.In
-
-	Server  *server.Server
-	Method  string
-	Pattern string
-	Handler gin.HandlerFunc
 }
 
 type RegisterRouteResult struct {
@@ -22,14 +17,21 @@ type RegisterRouteResult struct {
 	Routes gin.IRoutes
 }
 
-func RegisterRoute(params RegisterRouteParams) (RegisterRouteResult, error) {
-	routes := params.Server.Gin.Handle(
-		params.Method,
-		params.Pattern,
-		params.Handler,
+func RegisterRoute(
+	Server *server.Server,
+	Method string,
+	Pattern string,
+	Handler gin.HandlerFunc,
+) (gin.IRoutes, error) {
+	routes := Server.Gin.Handle(
+		Method,
+		Pattern,
+		Handler,
 	)
 
-	return RegisterRouteResult{Routes: routes}, nil
+	return routes, nil
 }
 
-var Module = fx.Provide(RegisterRoute)
+var Module = fx.Provide(
+	fx.Annotate(RegisterRoute),
+)

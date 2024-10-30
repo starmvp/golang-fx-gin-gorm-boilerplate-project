@@ -17,67 +17,45 @@ type Controller struct {
 	Handlers []Handler
 }
 
-type ControllerParams struct {
-	fx.In
-
-	Db       *db.DB
-	Logger   *logger.Logger
-	Handlers []Handler
-}
-
-type ControllerResult struct {
-	fx.Out
-
-	Controller *Controller
-}
-
-func NewController(params ControllerParams) (ControllerResult, error) {
-	l := params.Logger
+func NewController(
+	Db *db.DB,
+	Logger *logger.Logger,
+	Handlers []Handler,
+) (*Controller, error) {
+	l := Logger
 	if l == nil {
 		l = zap.NewNop()
 	}
-	c := &Controller{
-		Db:       params.Db,
+	c := Controller{
+		Db:       Db,
 		Logger:   l,
-		Handlers: params.Handlers,
+		Handlers: Handlers,
 	}
 
-	return ControllerResult{Controller: c}, nil
-}
-
-type RegisterControllerParams struct {
-	fx.In
-
-	Server     *server.Server
-	Controller *Controller
-}
-
-type RegisterControllerResult struct {
-	fx.Out
-
-	Controller *Controller
+	return &c, nil
 }
 
 func RegisterController(
-	params RegisterControllerParams,
-) (RegisterControllerResult, error) {
-	handlers := params.Controller.Handlers
+	s *server.Server,
+	c *Controller,
+) (*Controller, error) {
+	handlers := c.Handlers
 	for _, handler := range handlers {
-		_, err := router.RegisterRoute(router.RegisterRouteParams{
-			Server:  params.Server,
-			Method:  handler.Method(),
-			Pattern: handler.Pattern(),
-			Handler: handler.Handler(),
-		})
+		_, err := router.RegisterRoute(
+			s,
+			handler.Method(),
+			handler.Pattern(),
+			handler.Handler(),
+		)
 		if err != nil {
-			return RegisterControllerResult{Controller: nil}, err
+			return nil, err
 		}
 	}
 
-	return RegisterControllerResult{Controller: params.Controller}, nil
+	return c, nil
 }
 
 var Module = fx.Provide(
-	NewController,
-	RegisterController,
+	fx.Annotate(NewController),
+	fx.Annotate(RegisterController),
 )

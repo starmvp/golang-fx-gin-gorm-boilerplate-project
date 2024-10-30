@@ -14,26 +14,16 @@ type Server struct {
 	Logger *logger.Logger
 }
 
-type ServerParams struct {
-	fx.In
-
-	Config *config.Config
-	Logger *logger.Logger
-}
-
-type ServerResult struct {
-	fx.Out
-
-	Server *Server
-}
-
-func New(params ServerParams) (ServerResult, error) {
+func New(
+	Config *config.Config,
+	Logger *logger.Logger,
+) (*Server, error) {
 	// TODO: add configure for server
 
 	g := gin.New()
 	_ = g.SetTrustedProxies(nil)
 
-	l := params.Logger
+	l := Logger
 	if l == nil {
 		l = zap.NewNop()
 	}
@@ -43,7 +33,11 @@ func New(params ServerParams) (ServerResult, error) {
 		Logger: l,
 	}
 
-	return ServerResult{Server: s}, nil
+	return s, nil
 }
 
-var Module = fx.Options(fx.Provide(New))
+var Module = fx.Options(
+	fx.Provide(
+		fx.Annotate(New),
+	),
+)

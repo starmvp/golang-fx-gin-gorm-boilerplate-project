@@ -121,7 +121,5 @@ func (l GormLogger) logger(ctx context.Context) *zap.Logger {
 }
 
 var Module = fx.Provide(
-	fx.Annotate(
-		NewGormLogger,
-	),
+	fx.Annotate(NewGormLogger),
 )

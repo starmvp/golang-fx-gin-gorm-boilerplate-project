@@ -1,6 +1,7 @@
 package app
 
 import (
+	"golang-fx-gin-gorm-boilerplate-project/internal/config"
 	"golang-fx-gin-gorm-boilerplate-project/internal/logger"
 	"golang-fx-gin-gorm-boilerplate-project/internal/web/server"
 
@@ -8,31 +9,23 @@ import (
 )
 
 type App struct {
-	server *server.Server
+	Server *server.Server
 }
 
-type AppParams struct {
-	fx.In
-
-	Logger *logger.Logger
-}
-
-type AppResult struct {
-	fx.Out
-
-	App *App
-}
-
-func NewApp(params AppParams) (AppResult, error) {
-	result, err := server.New(server.ServerParams{
-		Logger: params.Logger,
-	})
-	if err != nil {
-		return AppResult{}, err
-	}
+func NewApp(
+	Server *server.Server,
+	Config *config.Config,
+	Logger *logger.Logger,
+) (*App, error) {
 	app := App{
-		server: result.Server,
+		Server: Server,
 	}
 
-	return AppResult{App: &app}, nil
+	return &app, nil
 }
+
+var Module = fx.Options(
+	fx.Provide(
+		fx.Annotate(NewApp),
+	),
+)
