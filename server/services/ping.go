@@ -1,20 +1,23 @@
 package services
 
 import (
+	"fmt"
+
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
-type HealthCheckService struct {
+type PingService struct {
 	DB     *gorm.DB
 	Logger *zap.Logger
 }
 
-func NewHealthCheckService(
+func NewPingService(
 	db *gorm.DB,
 	logger *zap.Logger,
-) *HealthCheckService {
-	return &HealthCheckService{
+) *PingService {
+	fmt.Println(">>> NewPingService")
+	return &PingService{
 		DB:     db,
 		Logger: logger,
 	}

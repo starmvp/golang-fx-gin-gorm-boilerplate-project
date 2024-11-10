@@ -25,6 +25,8 @@ func main() {
 
 		logger.Module,
 
+		// services.Module,
+		// handlers.Module,
 		server.Module,
 
 		fx.Provide(zap.NewExample),
@@ -62,6 +64,26 @@ func main() {
 			R().
 			Get(
 				fmt.Sprintf("http://%s/health", utils.GetWebserverAddr()),
+			)
+		if err != nil {
+			log.Fatal(fmt.Errorf("resty.Get: %w", err))
+		}
+		fmt.Println("Testing Server: " + string(res.Body()))
+		res, err = resty.
+			New().
+			R().
+			Get(
+				fmt.Sprintf("http://%s/api/v1/noauth/ping", utils.GetWebserverAddr()),
+			)
+		if err != nil {
+			log.Fatal(fmt.Errorf("resty.Get: %w", err))
+		}
+		fmt.Println("Testing Server: " + string(res.Body()))
+		res, err = resty.
+			New().
+			R().
+			Get(
+				fmt.Sprintf("http://%s/api/v1/needauth/ping", utils.GetWebserverAddr()),
 			)
 		if err != nil {
 			log.Fatal(fmt.Errorf("resty.Get: %w", err))

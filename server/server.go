@@ -8,6 +8,7 @@ import (
 	"golang-fx-gin-gorm-boilerplate-project/server/handlers"
 	"golang-fx-gin-gorm-boilerplate-project/server/services"
 
+	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -15,6 +16,9 @@ import (
 
 type AppServer struct {
 	server.Server
+
+	ApiNoAuth   *gin.IRoutes
+	ApiNeedAuth *gin.IRoutes
 }
 
 func NewAppServer(c *config.Config, d *gorm.DB, l *zap.Logger) *AppServer {
@@ -40,10 +44,23 @@ var Module = fx.Options(
 				_ = s.Run(utils.GetWebserverAddr())
 			}()
 		},
+		func(s *services.PingService) {
+			fmt.Println("Server: Configuring services: ping: ", s)
+		},
 		func(s *AppServer, handler *handlers.HealthCheckHandler) {
 			fmt.Println("Server: Configuring routes: health")
 			s.Handlers = append(s.Handlers, handler)
 			s.NoAuth.GET("/health", handler.HealthCheck())
+		},
+		func(s *AppServer, handler *handlers.PingHandler) {
+			fmt.Println("Server: Configuring routes: no auth ping")
+			s.Handlers = append(s.Handlers, handler)
+			s.NoAuth.GET("/api/v1/noauth/ping", handler.Ping())
+		},
+		func(s *AppServer, handler *handlers.PingHandler) {
+			fmt.Println("Server: Configuring routes: need auth ping")
+			s.Handlers = append(s.Handlers, handler)
+			s.NeedsAuth.GET("/api/v1/needauth/ping", handler.Ping())
 		},
 	),
 )
