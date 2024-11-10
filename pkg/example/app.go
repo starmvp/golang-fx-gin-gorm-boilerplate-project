@@ -3,6 +3,7 @@ package example
 import (
 	"golang-fx-gin-gorm-boilerplate-project/internal/app"
 	e "golang-fx-gin-gorm-boilerplate-project/internal/errors"
+	"golang-fx-gin-gorm-boilerplate-project/pkg/example/server"
 
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -25,6 +26,9 @@ func NewExampleApp(
 	return &e, nil
 }
 
-var Module = fx.Provide(
-	fx.Annotate(NewExampleApp),
+var Module = fx.Options(
+	fx.Provide(
+		fx.Annotate(NewExampleApp),
+	),
+	server.Module,
 )

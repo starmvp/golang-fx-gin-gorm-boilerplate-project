@@ -3,47 +3,35 @@ package main
 import (
 	"context"
 	"fmt"
-	"golang-fx-gin-gorm-boilerplate-project/internal/app"
-	"golang-fx-gin-gorm-boilerplate-project/internal/config"
+	"golang-fx-gin-gorm-boilerplate-project/config"
 	"golang-fx-gin-gorm-boilerplate-project/internal/db"
 	"golang-fx-gin-gorm-boilerplate-project/internal/logger"
-	"golang-fx-gin-gorm-boilerplate-project/internal/web/controller"
-	"golang-fx-gin-gorm-boilerplate-project/internal/web/server"
+	"golang-fx-gin-gorm-boilerplate-project/internal/utils"
 	"golang-fx-gin-gorm-boilerplate-project/pkg/example"
-	"golang-fx-gin-gorm-boilerplate-project/pkg/example/routers"
+
+	// "golang-fx-gin-gorm-boilerplate-project/pkg/example/server"
+
+	// ws "golang-fx-gin-gorm-boilerplate-project/internal/web/server"
+
 	"log"
-	"os"
-	"strings"
 	"time"
 
 	"github.com/go-resty/resty/v2"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
-
-func getWebserverAddr() string {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "18080"
-	}
-	// e.g 127.0.0.1:8080
-	if !strings.Contains(port, ":") {
-		port = ":" + port
-	}
-	return port
-}
 
 func main() {
 	app := fx.New(
-		app.Module,
 		config.Module,
 		db.Module,
+
 		logger.Module,
-		server.Module,
 
 		example.Module,
-		routers.Module,
+		// server.Module,
 
 		fx.Provide(zap.NewExample),
 		fx.WithLogger(func(logger *zap.Logger) fxevent.Logger {
@@ -51,16 +39,7 @@ func main() {
 		}),
 
 		fx.Invoke(
-			func(app *app.App, logger *zap.Logger) {
-				logger.Debug("Webserver module invoked")
-				go func() {
-					_ = app.Server.Gin.Run(getWebserverAddr())
-				}()
-			},
-			func(cl []*controller.Controller, logger *zap.Logger) {
-				logger.Debug("Controller module invoked")
-			},
-			func(db *db.DB, logger *zap.Logger) {
+			func(db *gorm.DB, logger *zap.Logger) {
 				logger.Debug("Database module invoked")
 			},
 			func(config *config.Config, logger *zap.Logger) {
@@ -88,7 +67,7 @@ func main() {
 			New().
 			R().
 			Get(
-				fmt.Sprintf("http://%s/ping", getWebserverAddr()),
+				fmt.Sprintf("http://%s/ping", utils.GetWebserverAddr()),
 			)
 		if err != nil {
 			log.Fatal(fmt.Errorf("resty.Get: %w", err))
