@@ -11,8 +11,6 @@ import (
 
 	// "golang-fx-gin-gorm-boilerplate-project/pkg/example/server"
 
-	// ws "golang-fx-gin-gorm-boilerplate-project/internal/web/server"
-
 	"log"
 	"time"
 

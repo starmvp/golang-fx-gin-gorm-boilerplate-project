@@ -36,12 +36,12 @@ var Module = fx.Options(
 		func(s *ExampleAppServer, logger *zap.Logger) {
 			logger.Debug("ExampleAppServer module invoked")
 			go func() {
-				_ = s.Server.Run(utils.GetWebserverAddr())
+				_ = s.Run(utils.GetWebserverAddr())
 			}()
 		},
 		func(s *ExampleAppServer, handler *handlers.PingHandler) {
-			s.Server.Handlers = append(s.Server.Handlers, handler)
-			s.Server.NoAuth.GET("/ping", handler.Ping())
+			s.Handlers = append(s.Handlers, handler)
+			s.NoAuth.GET("/ping", handler.Ping())
 		},
 	),
 )
