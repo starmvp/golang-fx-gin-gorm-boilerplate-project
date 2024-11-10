@@ -6,13 +6,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"gorm.io/gorm"
 )
 
 type PingHandler struct {
-	DB      *gorm.DB
-	Logger  *zap.Logger
 	Service *services.PingService
+	Logger  *zap.Logger
 }
 
 func (h PingHandler) Name() string {
@@ -20,12 +18,10 @@ func (h PingHandler) Name() string {
 }
 
 func NewPingHandler(
-	db *gorm.DB,
-	logger *zap.Logger,
 	service *services.PingService,
+	logger *zap.Logger,
 ) *PingHandler {
 	pc := &PingHandler{
-		DB:      db,
 		Logger:  logger,
 		Service: service,
 	}
