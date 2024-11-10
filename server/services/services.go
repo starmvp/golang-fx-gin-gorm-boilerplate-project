@@ -2,4 +2,8 @@ package services
 
 import "go.uber.org/fx"
 
-var Module = fx.Provide()
+var Module = fx.Options(
+	fx.Provide(
+		fx.Annotate(NewHealthCheckService),
+	),
+)

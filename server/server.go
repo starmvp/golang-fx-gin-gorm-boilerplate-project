@@ -1,9 +1,12 @@
 package server
 
 import (
-	"golang-fx-gin-gorm-boilerplate-project/internal/config"
+	"fmt"
+	"golang-fx-gin-gorm-boilerplate-project/config"
 	"golang-fx-gin-gorm-boilerplate-project/internal/utils"
 	"golang-fx-gin-gorm-boilerplate-project/internal/web/server"
+	"golang-fx-gin-gorm-boilerplate-project/server/handlers"
+	"golang-fx-gin-gorm-boilerplate-project/server/services"
 
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -16,9 +19,9 @@ type AppServer struct {
 
 func NewAppServer(c *config.Config, d *gorm.DB, l *zap.Logger) *AppServer {
 	s := &AppServer{
-		Server: *server.NewServer(c, d, l),
+		Server: *server.NewServer(&c.Config, d, l),
 	}
-	s.Server.ConfigureRouteGroups()
+	s.ConfigureRouteGroups()
 	return s
 }
 
@@ -26,22 +29,21 @@ var Module = fx.Options(
 	fx.Provide(
 		fx.Annotate(NewAppServer),
 	),
+
+	services.Module,
+	handlers.Module,
+
 	fx.Invoke(
 		func(s *AppServer, logger *zap.Logger) {
 			logger.Debug("AppServer module invoked")
 			go func() {
-				_ = s.Server.Run(utils.GetWebserverAddr())
+				_ = s.Run(utils.GetWebserverAddr())
 			}()
 		},
-		// func(s *AppServer, handler *handlers.HealthCheckHandler) {
-		// 	fmt.Println("Server: Configuring routes: health")
-		// 	s.Handlers = append(server.Handlers, handler)
-		// 	s.Gin.GET("/health", handler.HealthCheck())
-		// },
-		// func(s *AppServer, handler *handlers.ChatHandler) {
-		// 	fmt.Println("Server: Configuring routes: chat")
-		// 	s.Handlers = append(server.Handlers, handler)
-		// 	s.Gin.GET("/chat", handler.Chat())
-		// },
+		func(s *AppServer, handler *handlers.HealthCheckHandler) {
+			fmt.Println("Server: Configuring routes: health")
+			s.Handlers = append(s.Handlers, handler)
+			s.NoAuth.GET("/health", handler.HealthCheck())
+		},
 	),
 )
