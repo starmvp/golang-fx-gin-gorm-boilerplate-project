@@ -27,8 +27,11 @@ func (s *Server) ConfigureRouteGroups() {
 		MaxAge: 12 * time.Hour,
 	}))
 
+	s.NoAuth = s.Gin.Group("/")
+
 	jwtAuth := providers.NewJwtAuth(s.DB)
-	needsAuth := s.Gin.Group("/").Use(func(c *gin.Context) {
+	s.NeedsAuth = s.Gin.Group("/")
+	s.NeedsAuth.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept")
@@ -39,7 +42,4 @@ func (s *Server) ConfigureRouteGroups() {
 		}
 		c.Next()
 	}).Use(jwtAuth.Middleware().MiddlewareFunc())
-
-	s.NoAuth = s.Gin
-	s.NeedsAuth = needsAuth
 }

@@ -16,8 +16,8 @@ type Server struct {
 	Logger *zap.Logger
 
 	Gin       *gin.Engine
-	NoAuth    gin.IRoutes
-	NeedsAuth gin.IRoutes
+	NoAuth    *gin.RouterGroup
+	NeedsAuth *gin.RouterGroup
 
 	Handlers []Handler
 	Services []Service
