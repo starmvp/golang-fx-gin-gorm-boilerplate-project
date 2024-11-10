@@ -25,6 +25,7 @@ go.work
 .DS_Store
 
 ## local version of env files
+.env
 .env.*.local
 
 ## build results

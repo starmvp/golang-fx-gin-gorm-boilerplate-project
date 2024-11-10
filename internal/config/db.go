@@ -28,7 +28,7 @@ const (
 
 func LoadDBConfig() *DBConfig {
 	maxOpenConns, err := strconv.Atoi(
-		utils.GetEnv(
+		utils.Getenv(
 			"DB_MAX_OPEN_CONNS",
 			defaultDBMaxOpenConns,
 		),
@@ -38,7 +38,7 @@ func LoadDBConfig() *DBConfig {
 	}
 
 	maxIdleConns, err := strconv.Atoi(
-		utils.GetEnv(
+		utils.Getenv(
 			"DB_MAX_IDLE_CONNS",
 			defaultDBMaxIdleConns,
 		),
@@ -48,7 +48,7 @@ func LoadDBConfig() *DBConfig {
 	}
 
 	connMaxLife, err := strconv.Atoi(
-		utils.GetEnv(
+		utils.Getenv(
 			"DB_CONN_MAX_LIFE",
 			defaultDBConnMaxLife,
 		),

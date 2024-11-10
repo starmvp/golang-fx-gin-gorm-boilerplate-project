@@ -2,22 +2,33 @@ package server
 
 import (
 	"golang-fx-gin-gorm-boilerplate-project/internal/config"
+	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
-	"go.uber.org/fx"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 type Server struct {
-	Gin    *gin.Engine
+	Config *config.Config
+	DB     *gorm.DB
 	Logger *zap.Logger
+
+	Gin       *gin.Engine
+	NoAuth    gin.IRoutes
+	NeedsAuth gin.IRoutes
+
+	Handlers []Handler
+	Services []Service
 }
 
-func New(
+func NewServer(
 	Config *config.Config,
+	DB *gorm.DB,
 	Logger *zap.Logger,
-) (*Server, error) {
-	// TODO: add configure for server
+) *Server {
+	// TODO: more configure for server
 
 	g := gin.New()
 	_ = g.SetTrustedProxies(nil)
@@ -28,15 +39,23 @@ func New(
 	}
 
 	var s = &Server{
-		Gin:    g,
+		Config: Config,
+		DB:     DB,
 		Logger: l,
+		Gin:    g,
 	}
+	s.ConfigureRouteGroups()
 
-	return s, nil
+	return s
 }
 
-var Module = fx.Options(
-	fx.Provide(
-		fx.Annotate(New),
-	),
-)
+func (server *Server) Run(addr string) error {
+	s := &http.Server{
+		Addr:         addr,
+		Handler:      server.Gin,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+	return s.ListenAndServe()
+	// return server.Gin.Run(":" + addr)
+}

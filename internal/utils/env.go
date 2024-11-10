@@ -2,7 +2,8 @@ package utils
 
 import "os"
 
-func GetEnv(key string, defaultValue ...string) string {
+// wrap of os.Getenv to support defaultValue
+func Getenv(key string, defaultValue ...string) string {
 	value := os.Getenv(key)
 	if value == "" {
 		if len(defaultValue) == 0 {

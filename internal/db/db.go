@@ -1,46 +1,55 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"golang-fx-gin-gorm-boilerplate-project/internal/config"
 	"golang-fx-gin-gorm-boilerplate-project/internal/logger"
+	"time"
 
+	_ "github.com/lib/pq"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
 )
 
-type DB struct {
-	Logger   *zap.Logger
-	DB       *gorm.DB
-	DBConfig *gorm.Config
-}
-
 func New(
-	Config *config.Config,
+	cfg *config.DBConfig,
 	Logger *zap.Logger,
 	GormLogger logger.GormLogger,
-) (*DB, error) {
-	// TODO: add configure for db
+) *gorm.DB {
+	dataSourceName := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		cfg.User,
+		cfg.Password,
+		cfg.Host,
+		cfg.Port,
+		cfg.Name,
+	)
 
-	if Logger == nil {
-		Logger = zap.NewNop()
+	sqlDB, err := sql.Open(cfg.Driver, dataSourceName)
+	if err != nil {
+		panic(err.Error())
 	}
-
-	fmt.Println("DB module invoked. GormLogger=", GormLogger)
 
 	GormLogger.SetAsDefault()
 	GormLogger.LogLevel = gormlogger.Warn
 
-	db := DB{
-		Logger: Logger,
-		DBConfig: &gorm.Config{
-			Logger: GormLogger,
-		},
+	gormDB, err := gorm.Open(postgres.New(postgres.Config{
+		Conn: sqlDB,
+	}), &gorm.Config{
+		Logger: GormLogger,
+	})
+	if err != nil {
+		panic(err.Error())
 	}
 
-	return &db, nil
+	sqlDB.SetMaxOpenConns(cfg.DBMaxOpenConns)
+	sqlDB.SetMaxIdleConns(cfg.DBMaxIdleConns)
+	sqlDB.SetConnMaxLifetime(time.Duration(cfg.DBConnMaxLife) * time.Second)
+
+	return gormDB
 }
 
 var Module = fx.Provide(
