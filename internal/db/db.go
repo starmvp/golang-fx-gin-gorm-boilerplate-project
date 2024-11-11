@@ -9,7 +9,6 @@ import (
 
 	_ "github.com/lib/pq"
 	"go.uber.org/fx"
-	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
@@ -17,7 +16,6 @@ import (
 
 func New(
 	cfg *config.DBConfig,
-	Logger *zap.Logger,
 	GormLogger logger.GormLogger,
 ) *gorm.DB {
 	dataSourceName := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
