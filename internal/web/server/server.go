@@ -57,5 +57,5 @@ func (server *Server) Run(addr string) error {
 		WriteTimeout: 10 * time.Second,
 	}
 	return s.ListenAndServe()
-	// return server.Gin.Run(":" + addr)
+	// return server.Gin.Run(addr)
 }
