@@ -96,7 +96,7 @@ const App: React.FC = () => {
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       {showLogin && (
-        <div style={{ marginBottom: '20px' }}>
+        <div style={{ marginBottom: '20px', borderBottom: '1px solid #ccc' }}>
           <input
             type="text"
             placeholder="Username"
@@ -120,6 +120,27 @@ const App: React.FC = () => {
         </div>
       )}
 
+      <div
+        style={{
+          flexGrow: 1,
+          overflowY: 'auto',
+          padding: '10px',
+          borderBottom: '1px solid #ccc',
+          marginTop: '20px'
+        }}
+      >
+        <div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
+          {log.map((entry, index) => (
+            <div key={index}>
+              <strong>Request:</strong> {entry.input}
+              <br />
+              <strong>Response:</strong> {entry.output}
+              <hr />
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div style={{ marginBottom: '20px' }}>
         <input
           type="text"
@@ -139,27 +160,6 @@ const App: React.FC = () => {
         >
           Send Request
         </button>
-      </div>
-
-      <div
-        style={{
-          flexGrow: 1,
-          overflowY: 'auto',
-          padding: '10px',
-          borderTop: '1px solid #ccc',
-          marginTop: '20px'
-        }}
-      >
-        <div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
-          {log.map((entry, index) => (
-            <div key={index}>
-              <strong>Request:</strong> {entry.input}
-              <br />
-              <strong>Response:</strong> {entry.output}
-              <hr />
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   )
