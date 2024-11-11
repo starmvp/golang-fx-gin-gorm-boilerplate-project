@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"golang-fx-gin-gorm-boilerplate-project/internal/web/server/providers"
+	"net/http"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -25,7 +26,13 @@ func (s *Server) ConfigureRouteGroups() {
 			return true
 		},
 		MaxAge: 12 * time.Hour,
-	}))
+	})).Use(func(c *gin.Context) {
+		if c.Request.Method == "OPTIONS" {
+			c.Status(http.StatusNoContent)
+			return
+		}
+		c.Next()
+	})
 
 	s.NoAuth = s.Gin.Group("/")
 
@@ -36,10 +43,6 @@ func (s *Server) ConfigureRouteGroups() {
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		if c.Request.Method == "OPTIONS" {
-			c.Status(200)
-			return
-		}
 		c.Next()
 	}).Use(jwtAuth.Middleware().MiddlewareFunc())
 }
