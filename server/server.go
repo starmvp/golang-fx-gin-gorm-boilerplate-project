@@ -2,6 +2,7 @@ package server
 
 import (
 	"golang-fx-gin-gorm-boilerplate-project/config"
+	"golang-fx-gin-gorm-boilerplate-project/internal/utils"
 	"golang-fx-gin-gorm-boilerplate-project/internal/web/server"
 	"golang-fx-gin-gorm-boilerplate-project/server/handlers"
 	"golang-fx-gin-gorm-boilerplate-project/server/services"
@@ -36,4 +37,13 @@ var Module = fx.Options(
 	handlers.Module,
 
 	routesModule,
+
+	fx.Invoke(
+		func(s *AppServer, logger *zap.Logger) {
+			logger.Debug("AppServer module invoked")
+			go func() {
+				_ = s.Run(utils.GetWebserverAddr())
+			}()
+		},
+	),
 )

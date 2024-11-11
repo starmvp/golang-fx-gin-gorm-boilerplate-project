@@ -2,13 +2,11 @@ package server
 
 import (
 	"fmt"
-	"golang-fx-gin-gorm-boilerplate-project/internal/utils"
 	"golang-fx-gin-gorm-boilerplate-project/server/handlers"
 	"golang-fx-gin-gorm-boilerplate-project/server/services"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
-	"go.uber.org/zap"
 )
 
 func (s *AppServer) ConfigureRouteGroups() {
@@ -27,12 +25,6 @@ func (s *AppServer) ConfigureRouteGroups() {
 
 var routesModule = fx.Options(
 	fx.Invoke(
-		func(s *AppServer, logger *zap.Logger) {
-			logger.Debug("AppServer module invoked")
-			go func() {
-				_ = s.Run(utils.GetWebserverAddr())
-			}()
-		},
 		func(s *services.PingService) {
 			fmt.Println("Server: Configuring services: ping: ", s)
 		},
