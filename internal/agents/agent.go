@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"boilerplate/internal/chain"
 	"boilerplate/internal/conversation"
 	"boilerplate/internal/utils"
@@ -30,7 +31,7 @@ type Agent struct {
 	Builder          *chain.ChainBuilder
 	Chains           []chains.Chain
 	Tools            []tools.Tool
-	Memory           *schema.Memory
+	Memory           schema.Memory
 	CallbacksHandler callbacks.Handler
 	Conversation     conversation.Conversation
 
@@ -57,7 +58,7 @@ func NewAgent(opts ...Option) (*Agent, error) {
 
 	memory := options.Memory
 	handler := callbacks.CombiningHandler{}
-	handler.Callbacks = append(handler.Callbacks, options.CallbacksHandler...)
+	handler.Callbacks = append(handler.Callbacks, options.CallbacksHandlers...)
 
 	io := utils.IO{
 		StringInputChannel:  options.StringInputChannel,
@@ -101,7 +102,7 @@ func (a Agent) CreateExecutor() agents.Executor {
 	executor := agents.NewExecutor(
 		a.Agent,
 		agents.WithMaxIterations(10),
-		agents.WithMemory(*a.Memory),
+		agents.WithMemory(a.Memory),
 		agents.WithCallbacksHandler(a.CallbacksHandler),
 	)
 	return *executor

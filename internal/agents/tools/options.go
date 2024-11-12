@@ -16,7 +16,7 @@ type Options struct {
 
 	Chain   *chains.LLMChain
 	Builder *chain.ChainBuilder
-	Memory  *schema.Memory
+	Memory  schema.Memory
 
 	VectorStore           vectorstores.VectorStore
 	RetrieverNumDocuments int
@@ -24,7 +24,7 @@ type Options struct {
 
 	utils.IO
 
-	CallbacksHandler []callbacks.Handler
+	CallbacksHandlers []callbacks.Handler
 }
 
 type Option func(*Options)
@@ -53,7 +53,7 @@ func WithBuilder(b *chain.ChainBuilder) Option {
 	}
 }
 
-func WithMemory(m *schema.Memory) Option {
+func WithMemory(m schema.Memory) Option {
 	return func(o *Options) {
 		o.Memory = m
 	}
@@ -83,14 +83,8 @@ func WithRetriever(r schema.Retriever) Option {
 	}
 }
 
-func WithCallbacksHandler(h callbacks.Handler) Option {
+func WithCallbacksHandlers(hs ...callbacks.Handler) Option {
 	return func(o *Options) {
-		o.CallbacksHandler = append(o.CallbacksHandler, h)
-	}
-}
-
-func WithCallbacksHandlers(h []callbacks.Handler) Option {
-	return func(o *Options) {
-		o.CallbacksHandler = append(o.CallbacksHandler, h...)
+		o.CallbacksHandlers = append(o.CallbacksHandlers, hs...)
 	}
 }

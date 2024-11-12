@@ -40,7 +40,7 @@ func NewWorkflowAgent(opts ...Option) *WorkflowAgent {
 	}
 
 	// tools.Options of the workflow, not for its Tools
-	wato := GetToolOptions(options)
+	wato := options.ToolOptions
 	// embedded tools.Tool in WorkflowAgent
 	wat := tools.NewTool(wato...)
 

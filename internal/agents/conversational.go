@@ -3,6 +3,7 @@ package agents
 import (
 	_ "embed"
 	"fmt"
+
 	"boilerplate/internal/agents/workflows"
 	"boilerplate/internal/utils"
 
@@ -28,12 +29,12 @@ func NewConversationalWorkflowAgent(
 	}
 
 	laOptions := agents.Options{}
-	for _, opt := range options.Options {
+	for _, opt := range options.LangChainOptions {
 		opt(&laOptions)
 	}
 
 	handler := callbacks.CombiningHandler{}
-	handler.Callbacks = append(handler.Callbacks, options.CallbacksHandler...)
+	handler.Callbacks = append(handler.Callbacks, options.CallbacksHandlers...)
 
 	prompt := getConversationalPrompt(
 		options,
@@ -103,9 +104,8 @@ func getConversationalPrompt(
 		}
 	}
 	for _, w := range workflows {
-		if w.ToolsInPrompt() {
-			tl = append(tl, w.GetTools()...)
-		}
+		ts := w.ToolsInPrompt()
+		tl = append(tl, ts...)
 	}
 
 	fmt.Println("getConversationalPrompt: options.PromptPrefix=", options.PromptPrefix)

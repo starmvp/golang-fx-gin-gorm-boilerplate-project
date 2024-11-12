@@ -2,6 +2,7 @@ package agents
 
 import (
 	"context"
+
 	"boilerplate/internal/agents/workflows"
 	"boilerplate/internal/chain"
 	"boilerplate/internal/conversation"
@@ -17,7 +18,7 @@ import (
 )
 
 type Options struct {
-	Options []Lagents.Option
+	LangChainOptions []Lagents.Option
 
 	LLM Lllms.Model
 
@@ -31,13 +32,13 @@ type Options struct {
 	PromptFormatInstructions string
 	OutputKey                string
 
-	Ctx              context.Context
-	Builder          *chain.ChainBuilder
-	Chains           []Lchains.Chain
-	Tools            []Ltools.Tool
-	Memory           *Lschema.Memory
-	CallbacksHandler []Lcallbacks.Handler
-	Conversation     conversation.Conversation
+	Ctx               context.Context
+	Builder           *chain.ChainBuilder
+	Chains            []Lchains.Chain
+	Tools             []Ltools.Tool
+	Memory            Lschema.Memory
+	CallbacksHandlers []Lcallbacks.Handler
+	Conversation      conversation.Conversation
 
 	utils.IO
 
@@ -47,9 +48,9 @@ type Options struct {
 
 type Option func(*Options)
 
-func WithLangChainOption(o Lagents.Option) Option {
+func WithLangChainOptions(os ...Lagents.Option) Option {
 	return func(opts *Options) {
-		opts.Options = append(opts.Options, o)
+		opts.LangChainOptions = append(opts.LangChainOptions, os...)
 	}
 }
 
@@ -75,35 +76,35 @@ func WithStreamingMode(use bool) Option {
 func WithPromptTemplate(t Lprompts.PromptTemplate) Option {
 	return func(o *Options) {
 		o.PromptTemplate = t
-		o.Options = append(o.Options, Lagents.WithPrompt(t))
+		o.LangChainOptions = append(o.LangChainOptions, Lagents.WithPrompt(t))
 	}
 }
 
 func WithPromptPrefix(prefix string) Option {
 	return func(o *Options) {
 		o.PromptPrefix = prefix
-		o.Options = append(o.Options, Lagents.WithPromptPrefix(prefix))
+		o.LangChainOptions = append(o.LangChainOptions, Lagents.WithPromptPrefix(prefix))
 	}
 }
 
 func WithFormatInstructions(instructions string) Option {
 	return func(o *Options) {
 		o.PromptFormatInstructions = instructions
-		o.Options = append(o.Options, Lagents.WithPromptFormatInstructions(instructions))
+		o.LangChainOptions = append(o.LangChainOptions, Lagents.WithPromptFormatInstructions(instructions))
 	}
 }
 
 func WithPromptSuffix(suffix string) Option {
 	return func(o *Options) {
 		o.PromptSuffix = suffix
-		o.Options = append(o.Options, Lagents.WithPromptSuffix(suffix))
+		o.LangChainOptions = append(o.LangChainOptions, Lagents.WithPromptSuffix(suffix))
 	}
 }
 
 func WithOutputKey(key string) Option {
 	return func(o *Options) {
 		o.OutputKey = key
-		o.Options = append(o.Options, Lagents.WithOutputKey(key))
+		o.LangChainOptions = append(o.LangChainOptions, Lagents.WithOutputKey(key))
 	}
 }
 
@@ -145,13 +146,13 @@ func WithTool(t Ltools.Tool) Option {
 
 func WithMemory(m Lschema.Memory) Option {
 	return func(o *Options) {
-		o.Memory = &m
+		o.Memory = m
 	}
 }
 
-func WithCallbacksHandler(h Lcallbacks.Handler) Option {
+func WithCallbacksHandlers(hs ...Lcallbacks.Handler) Option {
 	return func(o *Options) {
-		o.CallbacksHandler = append(o.CallbacksHandler, h)
+		o.CallbacksHandlers = append(o.CallbacksHandlers, hs...)
 	}
 }
 

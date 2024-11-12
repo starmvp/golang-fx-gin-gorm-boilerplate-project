@@ -21,7 +21,7 @@ type Tool struct {
 	// for langchain
 	Chain            *chains.LLMChain
 	Builder          *chain.ChainBuilder
-	Memory           *schema.Memory
+	Memory           schema.Memory
 	CallbacksHandler callbacks.CombiningHandler
 
 	// for logging
@@ -52,7 +52,7 @@ func NewTool(opts ...Option) *Tool {
 	}
 
 	handler := callbacks.CombiningHandler{}
-	handler.Callbacks = append(handler.Callbacks, options.CallbacksHandler...)
+	handler.Callbacks = append(handler.Callbacks, options.CallbacksHandlers...)
 
 	t := Tool{
 		ToolName:              options.ToolName,

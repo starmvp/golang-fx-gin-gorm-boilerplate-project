@@ -3,6 +3,10 @@ package workflows
 import (
 	"context"
 	_ "embed"
+
+	"boilerplate/internal/agents/tools"
+
+	Ltools "github.com/starmvp/langchaingo/tools"
 )
 
 // not a real workflow, use as common tools wrapper
@@ -15,8 +19,10 @@ func NewCommonWorkflowAgent(opts ...Option) *CommonWorkflowAgent {
 	description := "Common tools"
 
 	opts = append(opts,
-		WithName(name),
-		WithDescription(description),
+		WithToolOptions(
+			tools.WithName(name),
+			tools.WithDescription(description),
+		),
 	)
 
 	return &CommonWorkflowAgent{
@@ -28,8 +34,8 @@ func (a CommonWorkflowAgent) InPrompt() bool {
 	return false
 }
 
-func (a CommonWorkflowAgent) ToolsInPrompt() bool {
-	return true
+func (a CommonWorkflowAgent) ToolsInPrompt() []Ltools.Tool {
+	return a.Tools
 }
 
 //go:embed prompts/common_workflow_prompt.txt
