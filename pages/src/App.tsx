@@ -14,6 +14,14 @@ const App: React.FC = () => {
       ? JSON.parse(localStorage.getItem('user') as string)
       : { name: '', email: '' }
   )
+  const [workspaceInfo, setWorkspaceInfo] = useState<{
+    userId: string
+    name: string
+  }>(
+    localStorage.getItem('workspace')
+      ? JSON.parse(localStorage.getItem('workspace') as string)
+      : { userId: '', name: '' }
+  )
   const [username, setUsername] = useState<string>('testuser')
   const [password, setPassword] = useState<string>('testpass')
   const [input, setInput] = useState<string>('')
@@ -25,6 +33,14 @@ const App: React.FC = () => {
   useEffect(() => {
     setJwtToken(localStorage.getItem('token') ?? '')
   }, [])
+
+  useEffect(() => {
+    console.log('userInfo=', userInfo)
+  }, [userInfo])
+
+  useEffect(() => {
+    console.log('workspaceInfo=', workspaceInfo)
+  }, [workspaceInfo])
 
   useEffect(() => {
     if (jwtToken) {
@@ -45,6 +61,25 @@ const App: React.FC = () => {
           localStorage.setItem(
             'user',
             JSON.stringify(response.data.user.profile)
+          )
+        } catch (error: unknown) {
+          handleRequestError(error)
+        }
+      })()
+      ;(async () => {
+        try {
+          const response = await axios.get(
+            'http://localhost:27788/api/v1/my/workspace',
+            {
+              headers: {
+                Authorization: `Bearer ${jwtToken}`
+              }
+            }
+          )
+          setWorkspaceInfo(response.data.workspace.profile)
+          localStorage.setItem(
+            'workspace',
+            JSON.stringify(response.data.workspace.profile)
           )
         } catch (error: unknown) {
           handleRequestError(error)
