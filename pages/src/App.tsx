@@ -17,7 +17,9 @@ const App: React.FC = () => {
   const [username, setUsername] = useState<string>('testuser')
   const [password, setPassword] = useState<string>('testpass')
   const [input, setInput] = useState<string>('')
-  const [jwtToken, setJwtToken] = useState<string | null>('')
+  const [isSendButtonDisabled, setIsSendButtonDisabled] =
+    useState<boolean>(true)
+  const [jwtToken, setJwtToken] = useState<string | null>()
   const [log, setLog] = useState<RequestResponse[]>([])
 
   useEffect(() => {
@@ -30,19 +32,57 @@ const App: React.FC = () => {
       localStorage.setItem('token', jwtToken)
       setIsLoggedIn(true)
       ;(async () => {
-        const response = await axios.get(
-          'http://localhost:27788/api/v1/my/profile',
-          {
-            headers: {
-              Authorization: `Bearer ${jwtToken}`
+        try {
+          const response = await axios.get(
+            'http://localhost:27788/api/v1/my/profile',
+            {
+              headers: {
+                Authorization: `Bearer ${jwtToken}`
+              }
             }
-          }
-        )
-        setUserInfo(response.data.user.profile)
-        localStorage.setItem('user', JSON.stringify(response.data.user.profile))
+          )
+          setUserInfo(response.data.user.profile)
+          localStorage.setItem(
+            'user',
+            JSON.stringify(response.data.user.profile)
+          )
+        } catch (error: unknown) {
+          handleRequestError(error)
+        }
       })()
     }
   }, [jwtToken])
+
+  useEffect(() => {
+    setIsSendButtonDisabled(!input)
+  }, [input])
+
+  const handleRequestError = (error: unknown) => {
+    let code = null
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError
+      if (axiosError.response) {
+        alert(
+          'Request failed (1): ' + (axiosError.response.data as Error).message
+        )
+        code = axiosError.response.status
+      } else {
+        alert('Request failed (2): ' + axiosError.message)
+        code = 500
+      }
+    } else {
+      alert('Request failed (3): ' + (error as Error).message)
+      code = 500
+    }
+    if (code === 401) {
+      alert('Unauthorized! Please login again.')
+      setIsLoggedIn(false)
+      setJwtToken(null)
+      setUserInfo({ name: '', email: '' })
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+    }
+  }
 
   // Handle the login
   const handleLogin = async () => {
@@ -60,18 +100,7 @@ const App: React.FC = () => {
         alert('Login failed! no token')
       }
     } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError
-        if (axiosError.response) {
-          alert(
-            'Request failed: ' + (axiosError.response.data as Error).message
-          )
-        } else {
-          alert('Request failed: ' + axiosError.message)
-        }
-      } else {
-        alert('Request failed: ' + (error as Error).message)
-      }
+      handleRequestError(error)
     }
   }
 
@@ -79,6 +108,11 @@ const App: React.FC = () => {
   const handleRequest = async () => {
     if (!jwtToken) {
       alert('You must log in first!')
+      return
+    }
+
+    if (!input) {
+      alert('Please enter a request!')
       return
     }
 
@@ -97,18 +131,7 @@ const App: React.FC = () => {
       setLog((prevLog) => [...prevLog, { input, output: response.data.output }])
       setInput('') // Clear the request input
     } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError
-        if (axiosError.response) {
-          alert(
-            'Request failed: ' + (axiosError.response.data as Error).message
-          )
-        } else {
-          alert('Request failed: ' + axiosError.message)
-        }
-      } else {
-        alert('Request failed: ' + (error as Error).message)
-      }
+      handleRequestError(error)
     }
   }
 
@@ -186,6 +209,7 @@ const App: React.FC = () => {
         <button
           onClick={handleRequest}
           style={{ margin: '5px', padding: '5px' }}
+          disabled={isSendButtonDisabled}
         >
           Send Request
         </button>
