@@ -15,25 +15,30 @@ import (
 	"github.com/starmvp/langchaingo/llms"
 	"github.com/starmvp/langchaingo/schema"
 	"github.com/starmvp/langchaingo/tools"
+	"github.com/starmvp/langchaingo/vectorstores"
 )
 
 var (
 	ErrNilChainBuilder = errors.New("nil chain builder")
 	ErrNilContext      = errors.New("nil context")
 	ErrNilLLM          = errors.New("nil llm")
+	ErrNilConversation = errors.New("nil conversation")
 )
 
 type Agent struct {
 	LLM   llms.Model
 	Agent agents.Agent
 
-	Ctx              context.Context
-	Builder          *chain.ChainBuilder
-	Chains           []chains.Chain
-	Tools            []tools.Tool
-	Memory           schema.Memory
-	CallbacksHandler callbacks.Handler
-	Conversation     conversation.Conversation
+	Ctx                   context.Context
+	Builder               *chain.ChainBuilder
+	Chains                []chains.Chain
+	Tools                 []tools.Tool
+	Memory                schema.Memory
+	VectorStore           *vectorstores.VectorStore
+	RetrieverNumDocuments int
+	Retriever             schema.Retriever
+	CallbacksHandler      callbacks.Handler
+	Conversation          conversation.Conversation
 
 	utils.IO
 }
@@ -84,15 +89,18 @@ func NewAgent(opts ...Option) (*Agent, error) {
 	}
 
 	a := &Agent{
-		Agent:            options.LangChainAgent,
-		Ctx:              options.Ctx,
-		Builder:          options.Builder,
-		Chains:           c,
-		Tools:            options.Tools,
-		Memory:           memory,
-		CallbacksHandler: handler,
-		Conversation:     options.Conversation,
-		IO:               io,
+		Agent:                 options.LangChainAgent,
+		Ctx:                   options.Ctx,
+		Builder:               options.Builder,
+		Chains:                c,
+		Tools:                 options.Tools,
+		Memory:                memory,
+		VectorStore:           options.VectorStore,
+		RetrieverNumDocuments: options.RetrieverNumDocuments,
+		Retriever:             options.Retriever,
+		CallbacksHandler:      handler,
+		Conversation:          options.Conversation,
+		IO:                    io,
 	}
 
 	return a, nil

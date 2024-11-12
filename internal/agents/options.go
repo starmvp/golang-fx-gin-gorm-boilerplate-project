@@ -15,6 +15,7 @@ import (
 	Lprompts "github.com/starmvp/langchaingo/prompts"
 	Lschema "github.com/starmvp/langchaingo/schema"
 	Ltools "github.com/starmvp/langchaingo/tools"
+	Lvectorstores "github.com/starmvp/langchaingo/vectorstores"
 )
 
 type Options struct {
@@ -32,13 +33,16 @@ type Options struct {
 	PromptFormatInstructions string
 	OutputKey                string
 
-	Ctx               context.Context
-	Builder           *chain.ChainBuilder
-	Chains            []Lchains.Chain
-	Tools             []Ltools.Tool
-	Memory            Lschema.Memory
-	CallbacksHandlers []Lcallbacks.Handler
-	Conversation      conversation.Conversation
+	Ctx                   context.Context
+	Builder               *chain.ChainBuilder
+	Chains                []Lchains.Chain
+	Tools                 []Ltools.Tool
+	Memory                Lschema.Memory
+	VectorStore           *Lvectorstores.VectorStore
+	RetrieverNumDocuments int
+	Retriever             Lschema.Retriever
+	CallbacksHandlers     []Lcallbacks.Handler
+	Conversation          conversation.Conversation
 
 	utils.IO
 
@@ -147,6 +151,24 @@ func WithTool(t Ltools.Tool) Option {
 func WithMemory(m Lschema.Memory) Option {
 	return func(o *Options) {
 		o.Memory = m
+	}
+}
+
+func WithVectorStore(vs *Lvectorstores.VectorStore) Option {
+	return func(o *Options) {
+		o.VectorStore = vs
+	}
+}
+
+func WithRetrieverNumDocuments(n int) Option {
+	return func(o *Options) {
+		o.RetrieverNumDocuments = n
+	}
+}
+
+func WithRetriever(r Lschema.Retriever) Option {
+	return func(o *Options) {
+		o.Retriever = r
 	}
 }
 
