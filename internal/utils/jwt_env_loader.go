@@ -2,8 +2,10 @@ package utils
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -17,12 +19,33 @@ var (
 	errMaxRefreshTimeHasNotBeenLoadedE = errors.New("an error has occurred during jwt max refresh time loading")
 )
 
+func parseTimeExprInSecond(expr string) (time.Duration, error) {
+	// Split the expression by '*'
+	parts := strings.Split(expr, "*")
+	if len(parts) == 0 {
+		return 0, fmt.Errorf("invalid duration format in %s", expr)
+	}
+
+	// Initialize total to 1 (since we'll be multiplying)
+	totalSeconds := 1
+	for _, part := range parts {
+		// Parse each part as an integer
+		num, err := strconv.Atoi(strings.TrimSpace(part))
+		if err != nil {
+			return 0, fmt.Errorf("invalid number in duration: %v", err)
+		}
+		totalSeconds *= num
+	}
+
+	return time.Duration(totalSeconds), nil
+}
+
 func NewJwtEnvVars() (JwtEnvVars, error) {
 	var jwtVars *jwtEnvVars
 	var jwtSecret string
 	var jwtRealm string
-	var jwtExpration int
-	var jwtMaxRefreshTime int
+	var jwtExpration time.Duration
+	var jwtMaxRefreshTime time.Duration
 	var err error
 
 	if jwtSecret = os.Getenv("JWT_SECRET"); jwtSecret == "" {
@@ -33,18 +56,18 @@ func NewJwtEnvVars() (JwtEnvVars, error) {
 		return jwtVars, errRealmIsNotSet
 	}
 
-	if jwtExpration, err = strconv.Atoi(os.Getenv("JWT_EXPIRATION_TIME")); err != nil {
+	if jwtExpration, err = parseTimeExprInSecond(os.Getenv("JWT_EXPIRATION_TIME")); err != nil {
 		return jwtVars, errExpirationTimeHasNotBeenLoaded
 	}
 
-	if jwtMaxRefreshTime, err = strconv.Atoi(os.Getenv("JWT_REFRESH_TIME")); err != nil {
+	if jwtMaxRefreshTime, err = parseTimeExprInSecond(os.Getenv("JWT_REFRESH_TIME")); err != nil {
 		return jwtVars, errMaxRefreshTimeHasNotBeenLoadedE
 	}
 
 	return &jwtEnvVars{
 		secret:         jwtSecret,
 		realm:          jwtRealm,
-		expirationTime: time.Duration(jwtExpration) * time.Second,
+		expirationTime: jwtExpration * time.Second,
 		maxRefreshTime: time.Duration(jwtMaxRefreshTime) * time.Second,
 	}, nil
 }
