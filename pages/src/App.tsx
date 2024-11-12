@@ -8,20 +8,39 @@ interface RequestResponse {
 }
 
 const App: React.FC = () => {
-  const [showLogin, setShowLogin] = useState<boolean>(true)
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
+  const [userInfo, setUserInfo] = useState<{ name: string; email: string }>(
+    localStorage.getItem('user')
+      ? JSON.parse(localStorage.getItem('user') as string)
+      : { name: '', email: '' }
+  )
   const [username, setUsername] = useState<string>('testuser')
   const [password, setPassword] = useState<string>('testpass')
   const [input, setInput] = useState<string>('')
-  const [jwtToken, setJwtToken] = useState<string | null>(
-    localStorage.getItem('token')
-  )
+  const [jwtToken, setJwtToken] = useState<string | null>('')
   const [log, setLog] = useState<RequestResponse[]>([])
+
+  useEffect(() => {
+    setJwtToken(localStorage.getItem('token') ?? '')
+  }, [])
 
   useEffect(() => {
     if (jwtToken) {
       console.log('jwtToken=', jwtToken)
       localStorage.setItem('token', jwtToken)
-      setShowLogin(false)
+      setIsLoggedIn(true)
+      ;(async () => {
+        const response = await axios.get(
+          'http://localhost:27788/api/v1/my/profile',
+          {
+            headers: {
+              Authorization: `Bearer ${jwtToken}`
+            }
+          }
+        )
+        setUserInfo(response.data.user.profile)
+        localStorage.setItem('user', JSON.stringify(response.data.user.profile))
+      })()
     }
   }, [jwtToken])
 
@@ -95,7 +114,17 @@ const App: React.FC = () => {
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {showLogin && (
+      {isLoggedIn ? (
+        <div
+          style={{
+            marginBottom: '20px',
+            borderBottom: '1px solid #ccc',
+            padding: '10px'
+          }}
+        >
+          {`${userInfo.name} <${userInfo.email}>`}
+        </div>
+      ) : (
         <div style={{ marginBottom: '20px', borderBottom: '1px solid #ccc' }}>
           <input
             type="text"
