@@ -19,15 +19,25 @@ type StandardConversation struct {
 	utils.IO
 }
 
-func NewStandardConversation() *StandardConversation {
-	// TODO: input/output channel options
-	ctx := context.Background()
-	sic := make(chan string, 5)
-	soc := make(chan string, 5)
+func NewStandardConversation(opts ...Option) *StandardConversation {
+	options := options{}
+	for _, opt := range opts {
+		opt(&options)
+	}
 
-	io := utils.IO{
-		StringInputChannel:  &sic,
-		StringOutputChannel: &soc,
+	ctx := options.Ctx
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	io := options.IO
+	if io.StringInputChannel == nil {
+		ic := make(chan string, 5)
+		io.StringInputChannel = &ic
+	}
+	if io.StringOutputChannel == nil {
+		oc := make(chan string, 5)
+		io.StringOutputChannel = &oc
 	}
 
 	return &StandardConversation{
