@@ -1,8 +1,8 @@
 package app
 
 import (
-	"golang-fx-gin-gorm-boilerplate-project/internal/config"
-	"golang-fx-gin-gorm-boilerplate-project/internal/web/server"
+	"boilerplate/internal/config"
+	"boilerplate/internal/web/server"
 
 	"go.uber.org/zap"
 )

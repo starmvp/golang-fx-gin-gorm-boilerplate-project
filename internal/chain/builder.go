@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"getidex_api/config"
+	"boilerplate/config"
 
 	"github.com/starmvp/langchaingo/chains"
 	"github.com/starmvp/langchaingo/llms"

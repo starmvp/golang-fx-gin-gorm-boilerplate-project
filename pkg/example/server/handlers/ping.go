@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"golang-fx-gin-gorm-boilerplate-project/pkg/example/server/services"
+	"boilerplate/pkg/example/server/services"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

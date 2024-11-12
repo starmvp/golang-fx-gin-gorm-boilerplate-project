@@ -3,15 +3,15 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"golang-fx-gin-gorm-boilerplate-project/internal/config"
-	"golang-fx-gin-gorm-boilerplate-project/internal/logger"
 	"time"
+
+	"boilerplate/internal/config"
+	"boilerplate/internal/logger"
 
 	_ "github.com/lib/pq"
 	"go.uber.org/fx"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	gormlogger "gorm.io/gorm/logger"
 )
 
 func New(
@@ -31,9 +31,6 @@ func New(
 		panic(err.Error())
 	}
 
-	GormLogger.SetAsDefault()
-	GormLogger.LogLevel = gormlogger.Warn
-
 	gormDB, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: sqlDB,
 	}), &gorm.Config{
@@ -50,6 +47,8 @@ func New(
 	return gormDB
 }
 
-var Module = fx.Provide(
-	fx.Annotate(New),
+var Module = fx.Options(
+	fx.Provide(
+		fx.Annotate(New),
+	),
 )

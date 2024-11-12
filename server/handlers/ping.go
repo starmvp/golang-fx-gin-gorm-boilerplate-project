@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"fmt"
-	"golang-fx-gin-gorm-boilerplate-project/server/services"
+	"boilerplate/server/services"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

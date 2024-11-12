@@ -3,7 +3,7 @@ package providers
 import (
 	"errors"
 	"fmt"
-	"golang-fx-gin-gorm-boilerplate-project/internal/utils"
+	"boilerplate/internal/utils"
 	"log"
 	"strings"
 	"sync"

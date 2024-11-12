@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
-	"golang-fx-gin-gorm-boilerplate-project/config"
-	"golang-fx-gin-gorm-boilerplate-project/internal/db"
-	"golang-fx-gin-gorm-boilerplate-project/internal/logger"
-	"golang-fx-gin-gorm-boilerplate-project/internal/utils"
-	"golang-fx-gin-gorm-boilerplate-project/server"
 	"log"
 	"time"
+
+	"boilerplate/config"
+	"boilerplate/internal/db"
+	"boilerplate/internal/logger"
+	"boilerplate/internal/utils"
+	"boilerplate/server"
 
 	"github.com/go-resty/resty/v2"
 	"go.uber.org/fx"

@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"golang-fx-gin-gorm-boilerplate-project/internal/web/server/providers"
+	"boilerplate/internal/web/server/providers"
 	"net/http"
 	"time"
 

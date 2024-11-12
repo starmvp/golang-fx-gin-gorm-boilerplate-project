@@ -1,12 +1,13 @@
 package tools
 
 import (
-	"getidex_api/internal/chain"
-	"getidex_api/internal/utils"
+	"boilerplate/internal/chain"
+	"boilerplate/internal/utils"
 
 	"github.com/starmvp/langchaingo/callbacks"
 	"github.com/starmvp/langchaingo/chains"
 	"github.com/starmvp/langchaingo/schema"
+	"github.com/starmvp/langchaingo/vectorstores"
 )
 
 type Options struct {
@@ -16,6 +17,10 @@ type Options struct {
 	Chain   *chains.LLMChain
 	Builder *chain.ChainBuilder
 	Memory  *schema.Memory
+
+	VectorStore           vectorstores.VectorStore
+	RetrieverNumDocuments int
+	Retriever             schema.Retriever
 
 	utils.IO
 
@@ -57,6 +62,24 @@ func WithMemory(m *schema.Memory) Option {
 func WithIO(io utils.IO) Option {
 	return func(o *Options) {
 		o.IO = io
+	}
+}
+
+func WithVectorStore(v vectorstores.VectorStore) Option {
+	return func(o *Options) {
+		o.VectorStore = v
+	}
+}
+
+func WithRetrieverNumDocuments(n int) Option {
+	return func(o *Options) {
+		o.RetrieverNumDocuments = n
+	}
+}
+
+func WithRetriever(r schema.Retriever) Option {
+	return func(o *Options) {
+		o.Retriever = r
 	}
 }
 

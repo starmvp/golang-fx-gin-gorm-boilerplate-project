@@ -3,10 +3,10 @@ package workflows
 import (
 	"errors"
 	"fmt"
-	"getidex_api/internal/agents/tools"
-	"getidex_api/internal/utils"
 
-	"github.com/starmvp/langchaingo/schema"
+	"boilerplate/internal/agents/tools"
+	"boilerplate/internal/utils"
+
 	Ltools "github.com/starmvp/langchaingo/tools"
 )
 
@@ -19,7 +19,7 @@ type Workflow interface {
 
 	GetTools() []Ltools.Tool
 	InPrompt() bool
-	ToolsInPrompt() bool
+	ToolsInPrompt() []Ltools.Tool
 }
 
 // WorkflowAgent is an tool set that can be used as a Tool also
@@ -29,7 +29,6 @@ type WorkflowAgent struct {
 	tools.Tool
 
 	Tools        []Ltools.Tool
-	Memory       *schema.Memory
 	PromptInputs map[string]any
 	Prompt       string
 }
@@ -40,25 +39,10 @@ func NewWorkflowAgent(opts ...Option) *WorkflowAgent {
 		opt(&options)
 	}
 
-	if options.Memory == nil {
-		panic(ErrNilMemory)
-	}
-
 	// tools.Options of the workflow, not for its Tools
-	to := []tools.Option{
-		tools.WithName(options.ToolName),
-		tools.WithDescription(options.ToolDescription),
-	}
-	for _, h := range options.Options.CallbacksHandler {
-		to = append(to, tools.WithCallbacksHandler(h))
-	}
-	to = append(to,
-		tools.WithChain(options.Chain),
-		tools.WithBuilder(options.Builder),
-		tools.WithIO(options.Options.IO),
-	)
-
-	t := tools.NewTool(to...)
+	wato := GetToolOptions(options)
+	// embedded tools.Tool in WorkflowAgent
+	wat := tools.NewTool(wato...)
 
 	tmpl := utils.CreateConversationalPrompt(
 		options.Tools,
@@ -72,9 +56,8 @@ func NewWorkflowAgent(opts ...Option) *WorkflowAgent {
 	}
 
 	wa := WorkflowAgent{
-		Tool:   *t,
+		Tool:   *wat,
 		Tools:  options.Tools,
-		Memory: options.Memory,
 		Prompt: prompt.String(),
 	}
 
@@ -92,7 +75,7 @@ func (w WorkflowAgent) InPrompt() bool {
 	return true
 }
 
-func (w WorkflowAgent) ToolsInPrompt() bool {
+func (w WorkflowAgent) ToolsInPrompt() []Ltools.Tool {
 	// default: no tools in prompt
-	return false
+	return []Ltools.Tool{}
 }

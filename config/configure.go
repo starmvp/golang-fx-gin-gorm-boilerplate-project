@@ -1,7 +1,7 @@
 package config
 
 import (
-	"golang-fx-gin-gorm-boilerplate-project/internal/config"
+	"boilerplate/internal/config"
 
 	"go.uber.org/fx"
 )

@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"getidex_api/internal/chain"
-	"getidex_api/internal/conversation"
-	"getidex_api/internal/utils"
+	"boilerplate/internal/chain"
+	"boilerplate/internal/conversation"
+	"boilerplate/internal/utils"
 
 	"github.com/starmvp/langchaingo/agents"
 	"github.com/starmvp/langchaingo/callbacks"

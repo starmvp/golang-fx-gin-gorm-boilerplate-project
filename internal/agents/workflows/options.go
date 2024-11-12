@@ -1,9 +1,9 @@
 package workflows
 
 import (
-	"getidex_api/internal/agents/tools"
-	"getidex_api/internal/chain"
-	"getidex_api/internal/utils"
+	"boilerplate/internal/agents/tools"
+	"boilerplate/internal/chain"
+	"boilerplate/internal/utils"
 
 	"github.com/starmvp/langchaingo/callbacks"
 	"github.com/starmvp/langchaingo/chains"
@@ -20,6 +20,21 @@ type Options struct {
 	PromptFormatInstructions string
 	PromptSuffix             string
 	PromptInputs             map[string]interface{}
+}
+
+func GetToolOptions(options Options) []tools.Option {
+	return []tools.Option{
+		tools.WithName(options.ToolName),
+		tools.WithDescription(options.ToolDescription),
+		tools.WithChain(options.Chain),
+		tools.WithBuilder(options.Builder),
+		tools.WithMemory(options.Memory),
+		tools.WithVectorStore(options.VectorStore),
+		tools.WithRetrieverNumDocuments(options.RetrieverNumDocuments),
+		tools.WithRetriever(options.Retriever),
+		tools.WithIO(options.IO),
+		tools.WithCallbacksHandlers(options.CallbacksHandler),
+	}
 }
 
 type Option func(*Options)

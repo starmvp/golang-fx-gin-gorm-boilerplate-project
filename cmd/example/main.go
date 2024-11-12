@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
-	"golang-fx-gin-gorm-boilerplate-project/config"
-	"golang-fx-gin-gorm-boilerplate-project/internal/db"
-	"golang-fx-gin-gorm-boilerplate-project/internal/logger"
-	"golang-fx-gin-gorm-boilerplate-project/internal/utils"
-	"golang-fx-gin-gorm-boilerplate-project/pkg/example"
 
-	// "golang-fx-gin-gorm-boilerplate-project/pkg/example/server"
+	"boilerplate/config"
+	"boilerplate/internal/db"
+	"boilerplate/internal/logger"
+	"boilerplate/internal/utils"
+	"boilerplate/pkg/example"
+
+	// "boilerplate/pkg/example/server"
 
 	"log"
 	"time"

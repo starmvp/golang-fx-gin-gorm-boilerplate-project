@@ -2,12 +2,14 @@ package tools
 
 import (
 	"fmt"
-	"getidex_api/internal/chain"
-	"getidex_api/internal/utils"
+
+	"boilerplate/internal/chain"
+	"boilerplate/internal/utils"
 
 	"github.com/starmvp/langchaingo/callbacks"
 	"github.com/starmvp/langchaingo/chains"
 	"github.com/starmvp/langchaingo/schema"
+	"github.com/starmvp/langchaingo/vectorstores"
 )
 
 // As base Tool, the Call function of Tool not implement, like an abstract class
@@ -16,13 +18,27 @@ type Tool struct {
 	ToolName        string
 	ToolDescription string
 
-	Chain   *chains.LLMChain
-	Builder *chain.ChainBuilder
-	Memory  *schema.Memory
-
-	utils.IO
-
+	// for langchain
+	Chain            *chains.LLMChain
+	Builder          *chain.ChainBuilder
+	Memory           *schema.Memory
 	CallbacksHandler callbacks.CombiningHandler
+
+	// for logging
+	Prompt                string
+	PromptTemplate        string
+	Input                 string
+	Output                string
+	UsagePromptTokens     int
+	UsageCompletionTokens int
+
+	// vector store
+	VectorStore           vectorstores.VectorStore
+	RetrieverNumDocuments int
+	Retriever             schema.Retriever
+
+	// to be used as a long-running agent
+	utils.IO
 }
 
 func NewTool(opts ...Option) *Tool {
@@ -39,13 +55,16 @@ func NewTool(opts ...Option) *Tool {
 	handler.Callbacks = append(handler.Callbacks, options.CallbacksHandler...)
 
 	t := Tool{
-		ToolName:         options.ToolName,
-		ToolDescription:  options.ToolDescription,
-		Chain:            options.Chain,
-		Builder:          options.Builder,
-		Memory:           options.Memory,
-		IO:               options.IO,
-		CallbacksHandler: handler,
+		ToolName:              options.ToolName,
+		ToolDescription:       options.ToolDescription,
+		Chain:                 options.Chain,
+		Builder:               options.Builder,
+		Memory:                options.Memory,
+		CallbacksHandler:      handler,
+		VectorStore:           options.VectorStore,
+		RetrieverNumDocuments: options.RetrieverNumDocuments,
+		Retriever:             options.Retriever,
+		IO:                    options.IO,
 	}
 
 	return &t

@@ -1,7 +1,7 @@
 package server
 
 import (
-	"golang-fx-gin-gorm-boilerplate-project/internal/config"
+	"boilerplate/internal/config"
 	"net/http"
 	"time"
 

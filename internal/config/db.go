@@ -1,7 +1,7 @@
 package config
 
 import (
-	"golang-fx-gin-gorm-boilerplate-project/internal/utils"
+	"boilerplate/internal/utils"
 	"log"
 	"os"
 	"strconv"

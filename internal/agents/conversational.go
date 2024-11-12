@@ -3,8 +3,8 @@ package agents
 import (
 	_ "embed"
 	"fmt"
-	"getidex_api/internal/agents/workflows"
-	"getidex_api/internal/utils"
+	"boilerplate/internal/agents/workflows"
+	"boilerplate/internal/utils"
 
 	"github.com/starmvp/langchaingo/agents"
 	"github.com/starmvp/langchaingo/callbacks"

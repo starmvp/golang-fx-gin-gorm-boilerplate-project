@@ -2,10 +2,10 @@ package agents
 
 import (
 	"context"
-	"getidex_api/internal/agents/workflows"
-	"getidex_api/internal/chain"
-	"getidex_api/internal/conversation"
-	"getidex_api/internal/utils"
+	"boilerplate/internal/agents/workflows"
+	"boilerplate/internal/chain"
+	"boilerplate/internal/conversation"
+	"boilerplate/internal/utils"
 
 	Lagents "github.com/starmvp/langchaingo/agents"
 	Lcallbacks "github.com/starmvp/langchaingo/callbacks"

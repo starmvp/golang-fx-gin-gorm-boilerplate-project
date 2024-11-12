@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"getidex_api/internal/utils"
+	"boilerplate/internal/utils"
 
 	"github.com/starmvp/langchaingo/agents"
 	"github.com/starmvp/langchaingo/chains"

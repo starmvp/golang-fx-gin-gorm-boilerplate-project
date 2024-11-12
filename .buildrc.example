@@ -1,2 +1,2 @@
-export IMAGE_NAME=golang-fx-gin-gorm-boilerplate-project
+export IMAGE_NAME=boilerplate
 export IMAGE_VERSION=$(date +%Y%m%d-%H%M%S)
