@@ -8,15 +8,15 @@ import (
 )
 
 type DBConfig struct {
-	User           string
-	Password       string
-	Driver         string
-	Name           string
-	Host           string
-	Port           string
-	DBMaxOpenConns int
-	DBMaxIdleConns int
-	DBConnMaxLife  int
+	User           string `yaml:"user"`
+	Password       string `yaml:"password"`
+	Driver         string `yaml:"driver"`
+	Name           string `yaml:"name"`
+	Host           string `yaml:"host"`
+	Port           string `yaml:"port"`
+	DBMaxOpenConns int    `yaml:"max_open_conns"`
+	DBMaxIdleConns int    `yaml:"max_idle_conns"`
+	DBConnMaxLife  int    `yaml:"conn_max_life"`
 }
 
 // TODO: provide default values support
@@ -69,4 +69,30 @@ func LoadDBConfig() *DBConfig {
 		DBMaxIdleConns: maxIdleConns,
 		DBConnMaxLife:  connMaxLife,
 	}
+}
+
+// for yaml config
+
+func NewDBConfig(c *YamlConfig) *DBConfig {
+	dbc := &DBConfig{}
+	err := dbc.Load(c)
+	if err != nil {
+		log.Fatalf("FATAL: failed to load db config. err: %+v", err)
+	}
+
+	return dbc
+}
+
+func (dbc DBConfig) SectionName() string {
+	return "db"
+}
+
+func (dbc *DBConfig) Load(c *YamlConfig) error {
+	result, err := LoadSection[DBConfig](c, dbc.SectionName())
+	if err != nil {
+		return err
+	}
+	*dbc = *result
+	c.SetSection(dbc.SectionName(), dbc)
+	return nil
 }

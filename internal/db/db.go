@@ -9,7 +9,6 @@ import (
 	"boilerplate/internal/logger"
 
 	_ "github.com/lib/pq"
-	"go.uber.org/fx"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -46,9 +45,3 @@ func New(
 
 	return gormDB
 }
-
-var Module = fx.Options(
-	fx.Provide(
-		fx.Annotate(New),
-	),
-)

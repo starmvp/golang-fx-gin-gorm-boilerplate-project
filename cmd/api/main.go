@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"boilerplate/config"
-	"boilerplate/internal/db"
-	"boilerplate/internal/logger"
+	"boilerplate/db"
 	"boilerplate/internal/utils"
+	"boilerplate/pkg/loggers"
 	"boilerplate/server"
 
 	"github.com/go-resty/resty/v2"
@@ -24,7 +24,7 @@ func main() {
 		config.Module,
 		db.Module,
 
-		logger.Module,
+		loggers.Module,
 
 		// services.Module,
 		// handlers.Module,

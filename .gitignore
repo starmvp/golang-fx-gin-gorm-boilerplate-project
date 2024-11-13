@@ -30,3 +30,5 @@ go.work
 
 ## build results
 dist
+
+config.yml

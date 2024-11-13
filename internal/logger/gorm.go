@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gorm.io/gorm"
@@ -119,7 +118,3 @@ func (l GormLogger) logger(ctx context.Context) *zap.Logger {
 	}
 	return logger
 }
-
-var Module = fx.Provide(
-	fx.Annotate(NewGormLogger),
-)

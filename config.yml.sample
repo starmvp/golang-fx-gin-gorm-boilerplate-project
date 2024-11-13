@@ -1,0 +1,30 @@
+http:
+  host: localhost
+  port: 57788
+
+db:
+  user: postgres
+  password: postgres
+  driver: postgres
+  name: boilerplate
+  host: localhost
+  port: 25432
+
+  #the configuration of the database connection pool
+  max_open_conns: 10
+  max_idle_conns: 5
+  conn_max_life: 3600
+
+
+demo-db:
+  user: postgres
+  password: postgres
+  driver: postgres
+  name: demo-db
+  host: localhost
+  port: 25432
+
+  #the configuration of the database connection pool
+  max_open_conns: 10
+  max_idle_conns: 5
+  conn_max_life: 3600
