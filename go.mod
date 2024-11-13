@@ -1,6 +1,6 @@
 module boilerplate
 
-go 1.23.2
+go 1.23
 
 require (
 	github.com/appleboy/gin-jwt/v2 v2.10.0
