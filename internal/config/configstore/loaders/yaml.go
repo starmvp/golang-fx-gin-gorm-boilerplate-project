@@ -16,7 +16,10 @@ func (yl YamlLoader) Load(source string) (map[string]any, error) {
 	if err != nil {
 		return nil, errors.New("failed to read config file")
 	}
-	if err := yaml.Unmarshal(data, &config); err != nil {
+
+	expandedData := os.ExpandEnv(string(data))
+
+	if err := yaml.Unmarshal([]byte(expandedData), &config); err != nil {
 		return nil, errors.New("failed to parse config file")
 	}
 	return config, nil
