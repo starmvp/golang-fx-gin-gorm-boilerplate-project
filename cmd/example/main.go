@@ -5,10 +5,10 @@ import (
 	"fmt"
 
 	"boilerplate/config"
-	"boilerplate/internal/db"
-	"boilerplate/internal/logger"
+	"boilerplate/db"
 	"boilerplate/internal/utils"
 	"boilerplate/pkg/example"
+	"boilerplate/pkg/loggers"
 
 	// "boilerplate/pkg/example/server"
 
@@ -27,7 +27,7 @@ func main() {
 		config.Module,
 		db.Module,
 
-		logger.Module,
+		loggers.Module,
 
 		example.Module,
 		// server.Module,

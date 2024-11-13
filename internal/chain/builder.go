@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"boilerplate/config"
+	"boilerplate/internal/config"
 
 	"github.com/starmvp/langchaingo/chains"
 	"github.com/starmvp/langchaingo/llms"
@@ -28,16 +28,16 @@ func NewChainBuilder(c *config.AgentConfig) (*ChainBuilder, error) {
 	fmt.Println("LLM Type: ", llmType)
 	switch llmType {
 	case "openai":
-		apiKey := c.OpenAIApiKey
+		apiKey := c.OpenAI.ApiKey
 		if apiKey == "" {
 			log.Fatalf("missing OpenAI API key")
 		}
-		modelName := c.OpenAIModelName
+		modelName := c.OpenAI.ModelName
 		fmt.Println("Model Name: ", modelName)
 		if modelName == "" {
 			log.Fatalf("missing OpenAI model name")
 		}
-		embeddingModelName := c.OpenAIEmbeddingModelName
+		embeddingModelName := c.OpenAI.EmbeddingModelName
 		fmt.Println("Embedding Model Name: ", embeddingModelName)
 		if embeddingModelName == "" {
 			log.Fatalf("missing OpenAI embedding model name")

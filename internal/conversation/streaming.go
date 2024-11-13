@@ -2,7 +2,8 @@ package conversation
 
 import (
 	"context"
-	"getidex_api/internal/utils"
+
+	"boilerplate/internal/utils"
 )
 
 type StreamingConversation struct {
