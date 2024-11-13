@@ -9,18 +9,23 @@ interface RequestResponse {
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
-  const [userInfo, setUserInfo] = useState<{ name: string; email: string }>(
+  const [userInfo, setUserInfo] = useState<{
+    id: string
+    name: string
+    email: string
+  }>(
     localStorage.getItem('user')
       ? JSON.parse(localStorage.getItem('user') as string)
-      : { name: '', email: '' }
+      : { id: '', name: '', email: '' }
   )
   const [workspaceInfo, setWorkspaceInfo] = useState<{
+    id: string
     userId: string
     name: string
   }>(
     localStorage.getItem('workspace')
       ? JSON.parse(localStorage.getItem('workspace') as string)
-      : { userId: '', name: '' }
+      : { id: '', userId: '', name: '' }
   )
   const [username, setUsername] = useState<string>('testuser')
   const [password, setPassword] = useState<string>('testpass')
@@ -113,7 +118,7 @@ const App: React.FC = () => {
       alert('Unauthorized! Please login again.')
       setIsLoggedIn(false)
       setJwtToken(null)
-      setUserInfo({ name: '', email: '' })
+      setUserInfo({ id: '', name: '', email: '' })
       localStorage.removeItem('token')
       localStorage.removeItem('user')
     }
@@ -154,7 +159,10 @@ const App: React.FC = () => {
     try {
       const response = await axios.post(
         'http://localhost:27788/api/v1/chat',
-        { input },
+        {
+          workspace_id: workspaceInfo.id,
+          input
+        },
         {
           headers: {
             Authorization: `Bearer ${jwtToken}`
