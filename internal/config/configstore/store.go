@@ -15,7 +15,13 @@ type moduleConfig interface {
 }
 
 type ConfigLoader interface {
+	Name() string
 	Load(source string) (map[string]any, error)
+}
+
+var configLoaders []ConfigLoader = []ConfigLoader{
+	loaders.YamlLoader{},
+	loaders.JsonLoader{},
 }
 
 type ConfigStore struct {
@@ -32,13 +38,20 @@ func NewConfigStore() *ConfigStore {
 	if envSource == "" {
 		envSource = "config.yml"
 	}
+
 	var loader ConfigLoader
-	switch loaderName {
-	case "yaml":
-		loader = loaders.YamlLoader{}
-	default:
+	for _, l := range configLoaders {
+		if l.Name() == loaderName {
+			fmt.Printf("Using loader: %s\n", l.Name())
+			loader = l
+			break
+		}
+	}
+
+	if loader == nil {
 		loader = loaders.YamlLoader{}
 	}
+
 	raw, err := loader.Load(envSource)
 	if err != nil {
 		log.Fatalf("FATAL: failed to load config. err: %+v", err)
